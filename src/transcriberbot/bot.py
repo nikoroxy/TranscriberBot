@@ -95,8 +95,8 @@ class TranscriberBot(metaclass=metaclass.Singleton):
       return self.active_check(super().send_message, *args, **kwargs)
 
     @mq.queuedmessage
-    def edit_message_text(self, *args, **kwargs):
-      return self.active_check(super().edit_message_text, *args, **kwargs)
+    def edit_text(self, *args, **kwargs):
+      return self.active_check(super().edit_text, *args, **kwargs)
 
   def __init__(self):
     self.error_handler = None

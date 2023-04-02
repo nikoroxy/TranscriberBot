@@ -82,23 +82,16 @@ def transcribe_audio_file(bot, update, path):
       try:
         if len(text + " " + speech) >= 4000:
           text = R.get_string_resource("transcription_continues", lang) + "\n"
-          message = bot.send_message(
-            chat_id=chat_id,
-            text=text + " " + speech + " <b>[...]</b>",
-            reply_to_message_id=message.message_id,
-            parse_mode="html",
-            is_group=is_group,
+          message = update.message.reply_html(
+            text + " " + speech + " <b>[...]</b>",
             reply_markup=keyboard
-          ).result()
+          )
         else:
-          message = bot.edit_message_text(
-            text=text + " " + speech + " <b>[...]</b>",
-            chat_id=chat_id,
-            message_id=message.message_id,
+          message = message.edit_text(
+            text + " " + speech + " <b>[...]</b>",
             parse_mode="html",
-            is_group=is_group,
             reply_markup=keyboard
-          ).result()
+          )
 
         text += " " + speech
         retry = False
@@ -127,20 +120,14 @@ def transcribe_audio_file(bot, update, path):
   while retry and TranscriberBot.get().thread_running(message_id):
     try:
       if success:
-        bot.edit_message_text(
-          text=text,
-          chat_id=chat_id,
-          message_id=message.message_id,
+        message = message.edit_text(
+          text,
           parse_mode="html",
-          is_group=is_group
         )
       else:
-        bot.edit_message_text(
+        message = message.edit_text(
           R.get_string_resource("transcription_failed", lang),
-          chat_id=chat_id,
-          message_id=message.message_id,
           parse_mode="html",
-          is_group=is_group
         )
       retry = False
     except telegram.error.TimedOut as t:
